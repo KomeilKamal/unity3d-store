@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.unity3d.player" android:installLocation="preferExternal" android:versionCode="1" android:versionName="1.0">
-  <uses-permission android:name="com.android.vending.BILLING" />
+  <uses-permission android:name="ir.mservices.market.BILLING" />
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
   <uses-permission android:name="android.permission.INTERNET" />
@@ -20,8 +20,14 @@
     </activity>
     <activity android:name="com.unity3d.player.VideoPlayer" android:label="@string/app_name" android:screenOrientation="behind" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen">
     </activity>
-    <meta-data android:name="billing.service" android:value="google.GooglePlayIabService">
+    <meta-data android:name="billing.service" android:value="google.MyketIabService">
     </meta-data>
-    <activity android:name="com.soomla.store.billing.google.GooglePlayIabService$IabActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+    <receiver android:name="com.amazon.device.iap.ResponseReceiver">
+      <intent-filter>
+        <action android:name="com.amazon.inapp.purchasing.NOTIFY" android:permission="com.amazon.inapp.purchasing.Permission.NOTIFY">
+        </action>
+      </intent-filter>
+    </receiver>
+    <activity android:name="com.soomla.store.billing.google.MyketIabService$IabActivity" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
   </application>
 </manifest>

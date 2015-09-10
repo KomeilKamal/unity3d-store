@@ -50,6 +50,20 @@ namespace Soomla.Store
 				SoomlaManifestTools.RemoveActivity("com.soomla.store.billing.google.GooglePlayIabService$IabActivity");
 			}
 
+			if (StoreSettings.MyketBP) {
+				SoomlaManifestTools.SetPermission("ir.mservices.market.BILLING");
+				SoomlaManifestTools.AddActivity("com.soomla.store.billing.google.MyketIabService$IabActivity",
+				                                new Dictionary<string, string>() { 
+					{"theme", "@android:style/Theme.Translucent.NoTitleBar.Fullscreen"} 
+				});
+				SoomlaManifestTools.AddMetaDataTag("billing.service", "google.MyketIabService");
+			} else {
+				// removing BILLING permission
+				SoomlaManifestTools.RemovePermission("ir.mservices.market.BILLING");
+				// removing Iab Activity
+				SoomlaManifestTools.RemoveActivity("com.soomla.store.billing.google.MyketIabService$IabActivity");
+			}
+
 			if (StoreSettings.AmazonBP) {
 				XmlElement receiverElement = SoomlaManifestTools.AppendApplicationElement("receiver", "com.amazon.device.iap.ResponseReceiver", null);
 				receiverElement.InnerText = "\n    ";

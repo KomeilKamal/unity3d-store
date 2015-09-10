@@ -23,24 +23,24 @@ using UnityEditor;
 
 namespace Soomla.Store
 {
-
-#if UNITY_EDITOR
+	
+	#if UNITY_EDITOR
 	[InitializeOnLoad]
-#endif
+	#endif
 	/// <summary>
 	/// This class holds the store's configurations.
 	/// </summary>
 	public class StoreSettings : ISoomlaSettings
 	{
-
-#if UNITY_EDITOR
-
+		
+		#if UNITY_EDITOR
+		
 		static StoreSettings instance = new StoreSettings();
 		static StoreSettings()
 		{
 			SoomlaEditorScript.addSettings(instance);
 		}
-
+		
 		bool showAndroidSettings = (EditorUserBuildSettings.activeBuildTarget == BuildTarget.Android);
 		#if UNITY_4_5 || UNITY_4_6
 		bool showIOSSettings = (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iPhone);
@@ -48,7 +48,7 @@ namespace Soomla.Store
 		bool showIOSSettings = (EditorUserBuildSettings.activeBuildTarget == BuildTarget.iOS);
 		#endif
 		bool showWP8Settings = (EditorUserBuildSettings.activeBuildTarget == BuildTarget.WP8Player);
-
+		
 		GUIContent noneBPLabel = new GUIContent("You have your own Billing Service");
 		GUIContent playLabel = new GUIContent("Google Play");
 		GUIContent playSsvLabel = new GUIContent("Fraud Protection [?]:", "Check if you want to turn on purchases verification with SOOMLA Fraud Protection Service.");
@@ -56,62 +56,65 @@ namespace Soomla.Store
 		GUIContent playClientSecretLabel = new GUIContent("Client Secret");
 		GUIContent playRefreshTokenLabel = new GUIContent("Refresh Token");
 		GUIContent playVerifyOnServerFailureLabel = new GUIContent("Verify On Server Failure [?]:", "Check if you want your purchases get validated if server failure happens.");
-
-
+		
+		
 		GUIContent amazonLabel = new GUIContent("Amazon");
+		GUIContent myketLabel = new GUIContent("Myket");
 		GUIContent publicKeyLabel = new GUIContent("API Key [?]:", "The API key from Google Play dev console (just in case you're using Google Play as billing provider).");
+		GUIContent myket_publicKeyLabel = new GUIContent("API Key [?]:", "The API key from Myket dev console (just in case you're using Myket as billing provider).");
 		GUIContent testPurchasesLabel = new GUIContent("Test Purchases [?]:", "Check if you want to allow purchases of Google's test product ids.");
+		GUIContent myket_testPurchasesLabel = new GUIContent("Test Purchases [?]:", "Check if you want to allow purchases of Myket's test product ids.");
 		GUIContent packageNameLabel = new GUIContent("Package Name [?]", "Your package as defined in Unity.");
-        	GUIContent wp8SimulatorModeLabel = new GUIContent("Run in Simulator (x86 build)");
-        	GUIContent wp8TestModeLabel = new GUIContent("Simulate Store. (Don't forget to adapt IAPMock.xml to fit your IAPs)");
-
+		GUIContent wp8SimulatorModeLabel = new GUIContent("Run in Simulator (x86 build)");
+		GUIContent wp8TestModeLabel = new GUIContent("Simulate Store. (Don't forget to adapt IAPMock.xml to fit your IAPs)");
+		
 		GUIContent iosSsvLabel = new GUIContent("Fraud Protection [?]:", "Check if you want to turn on purchases verification with SOOMLA Fraud Protection Service.");
-    	GUIContent iosVerifyOnServerFailureLabel = new GUIContent("Verify On Server Failure [?]:", "Check if you want your purchases get validated if server failure happens.");
-
+		GUIContent iosVerifyOnServerFailureLabel = new GUIContent("Verify On Server Failure [?]:", "Check if you want your purchases get validated if server failure happens.");
+		
 		GUIContent frameworkVersion = new GUIContent("Store Version [?]", "The SOOMLA Framework Store Module version. ");
 		GUIContent buildVersion = new GUIContent("Store Build [?]", "The SOOMLA Framework Store Module build.");
-
+		
 		public void OnEnable() {
 			// Generating AndroidManifest.xml
-//			ManifestTools.GenerateManifest();
+			//			ManifestTools.GenerateManifest();
 		}
-
+		
 		public void OnModuleGUI() {
 			AndroidGUI();
 			EditorGUILayout.Space();
 			IOSGUI();
-            		EditorGUILayout.Space();
-            		WP8GUI();
+			EditorGUILayout.Space();
+			WP8GUI();
 		}
-
+		
 		public void OnInfoGUI() {
 			SoomlaEditorScript.SelectableLabelField(frameworkVersion, "1.8.2");
 			SoomlaEditorScript.SelectableLabelField(buildVersion, "1");
 			EditorGUILayout.Space();
 		}
-
+		
 		public void OnSoomlaGUI() {
-
+			
 		}
-
+		
 		private void IOSGUI()
 		{
 			showIOSSettings = EditorGUILayout.Foldout(showIOSSettings, "iOS Build Settings");
 			if (showIOSSettings)
 			{
 				IosSSV = EditorGUILayout.Toggle(iosSsvLabel, IosSSV);
-
-                if (IosSSV) {
-                    EditorGUILayout.BeginHorizontal();
-                    EditorGUILayout.Space();
-                    EditorGUILayout.LabelField(SoomlaEditorScript.EmptyContent, SoomlaEditorScript.SpaceWidth, SoomlaEditorScript.FieldHeight);
-                    IosVerifyOnServerFailure = EditorGUILayout.Toggle(iosVerifyOnServerFailureLabel, IosVerifyOnServerFailure);
-                    EditorGUILayout.EndHorizontal();
-                }
+				
+				if (IosSSV) {
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					EditorGUILayout.LabelField(SoomlaEditorScript.EmptyContent, SoomlaEditorScript.SpaceWidth, SoomlaEditorScript.FieldHeight);
+					IosVerifyOnServerFailure = EditorGUILayout.Toggle(iosVerifyOnServerFailureLabel, IosVerifyOnServerFailure);
+					EditorGUILayout.EndHorizontal();
+				}
 			}
 			EditorGUILayout.Space();
 		}
-
+		
 		private void AndroidGUI()
 		{
 			showAndroidSettings = EditorGUILayout.Foldout(showAndroidSettings, "Android Settings");
@@ -120,69 +123,71 @@ namespace Soomla.Store
 				EditorGUILayout.BeginHorizontal();
 				SoomlaEditorScript.SelectableLabelField(packageNameLabel, PlayerSettings.bundleIdentifier);
 				EditorGUILayout.EndHorizontal();
-
+				
 				EditorGUILayout.Space();
 				EditorGUILayout.HelpBox("Billing Service Selection", MessageType.None);
-
-				if (!GPlayBP && !AmazonBP && !NoneBP) {
+				
+				if (!GPlayBP && !AmazonBP && !MyketBP && !NoneBP) {
 					GPlayBP = true;
 				}
-
+				
 				NoneBP = EditorGUILayout.ToggleLeft(noneBPLabel, NoneBP);
-
+				
 				bool update;
 				bpUpdate.TryGetValue("none", out update);
 				if (NoneBP && !update) {
 					setCurrentBPUpdate("none");
-
+					
 					AmazonBP = false;
 					GPlayBP = false;
+					MyketBP = false;
 					SoomlaManifestTools.GenerateManifest();
 					handlePlayBPJars(true);
 					handleAmazonBPJars(true);
+					handleMyketBPJars(true);
 				}
-
-
+				
+				
 				GPlayBP = EditorGUILayout.ToggleLeft(playLabel, GPlayBP);
-
+				
 				if (GPlayBP) {
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.Space();
 					EditorGUILayout.LabelField(publicKeyLabel, SoomlaEditorScript.FieldWidth, SoomlaEditorScript.FieldHeight);
 					AndroidPublicKey = EditorGUILayout.TextField(AndroidPublicKey, SoomlaEditorScript.FieldHeight);
 					EditorGUILayout.EndHorizontal();
-
+					
 					EditorGUILayout.Space();
-
+					
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField(SoomlaEditorScript.EmptyContent, SoomlaEditorScript.SpaceWidth, SoomlaEditorScript.FieldHeight);
 					AndroidTestPurchases = EditorGUILayout.Toggle(testPurchasesLabel, AndroidTestPurchases);
 					EditorGUILayout.EndHorizontal();
-
+					
 					EditorGUILayout.BeginHorizontal();
 					EditorGUILayout.LabelField(SoomlaEditorScript.EmptyContent, SoomlaEditorScript.SpaceWidth, SoomlaEditorScript.FieldHeight);
 					PlaySsvValidation = EditorGUILayout.Toggle(playSsvLabel, PlaySsvValidation);
 					EditorGUILayout.EndHorizontal();
-
+					
 					if (PlaySsvValidation) {
 						EditorGUILayout.BeginHorizontal();
 						EditorGUILayout.Space();
 						EditorGUILayout.LabelField(playClientIdLabel, SoomlaEditorScript.FieldWidth, SoomlaEditorScript.FieldHeight);
 						PlayClientId = EditorGUILayout.TextField(PlayClientId, SoomlaEditorScript.FieldHeight);
 						EditorGUILayout.EndHorizontal();
-
+						
 						EditorGUILayout.BeginHorizontal();
 						EditorGUILayout.Space();
 						EditorGUILayout.LabelField(playClientSecretLabel, SoomlaEditorScript.FieldWidth, SoomlaEditorScript.FieldHeight);
 						PlayClientSecret = EditorGUILayout.TextField(PlayClientSecret, SoomlaEditorScript.FieldHeight);
 						EditorGUILayout.EndHorizontal();
-
+						
 						EditorGUILayout.BeginHorizontal();
 						EditorGUILayout.Space();
 						EditorGUILayout.LabelField(playRefreshTokenLabel, SoomlaEditorScript.FieldWidth, SoomlaEditorScript.FieldHeight);
 						PlayRefreshToken = EditorGUILayout.TextField(PlayRefreshToken, SoomlaEditorScript.FieldHeight);
 						EditorGUILayout.EndHorizontal();
-
+						
 						EditorGUILayout.BeginHorizontal();
 						EditorGUILayout.Space();
 						EditorGUILayout.LabelField(SoomlaEditorScript.EmptyContent, SoomlaEditorScript.SpaceWidth, SoomlaEditorScript.FieldHeight);
@@ -190,24 +195,55 @@ namespace Soomla.Store
 						EditorGUILayout.EndHorizontal();
 					}
 				}
-
+				
 				bpUpdate.TryGetValue("play", out update);
 				if (GPlayBP && !update) {
 					setCurrentBPUpdate("play");
-
+					
 					AmazonBP = false;
 					NoneBP = false;
+					MyketBP = false;
 					SoomlaManifestTools.GenerateManifest();
 					handlePlayBPJars(false);
 					handleAmazonBPJars(true);
+					handleMyketBPJars(true);
 				}
-
-
+				
+				MyketBP = EditorGUILayout.ToggleLeft(myketLabel, MyketBP);
+				
+				if (MyketBP) {
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.Space();
+					EditorGUILayout.LabelField(myket_publicKeyLabel, SoomlaEditorScript.FieldWidth, SoomlaEditorScript.FieldHeight);
+					MyketPublicKey = EditorGUILayout.TextField(MyketPublicKey, SoomlaEditorScript.FieldHeight);
+					EditorGUILayout.EndHorizontal();
+					
+					EditorGUILayout.Space();
+					
+					EditorGUILayout.BeginHorizontal();
+					EditorGUILayout.LabelField(SoomlaEditorScript.EmptyContent, SoomlaEditorScript.SpaceWidth, SoomlaEditorScript.FieldHeight);
+					MyketTestPurchases = EditorGUILayout.Toggle(myket_testPurchasesLabel, MyketTestPurchases);
+					EditorGUILayout.EndHorizontal();
+				}
+				
+				bpUpdate.TryGetValue("myket", out update);
+				if (MyketBP && !update) {
+					setCurrentBPUpdate("myket");
+					
+					//MyketBP = false;
+					NoneBP = false;
+					GPlayBP = false;
+					SoomlaManifestTools.GenerateManifest();
+					handleMyketBPJars(false);
+					handlePlayBPJars(true);
+					handleAmazonBPJars(true);
+				}
+				
 				AmazonBP = EditorGUILayout.ToggleLeft(amazonLabel, AmazonBP);
 				bpUpdate.TryGetValue("amazon", out update);
 				if (AmazonBP && !update) {
 					setCurrentBPUpdate("amazon");
-
+					
 					GPlayBP = false;
 					NoneBP = false;
 					SoomlaManifestTools.GenerateManifest();
@@ -217,25 +253,25 @@ namespace Soomla.Store
 			}
 			EditorGUILayout.Space();
 		}
-
-
-        private void WP8GUI()
-        {
-            showWP8Settings = EditorGUILayout.Foldout(showWP8Settings, "WP8 Settings");
-            if (showWP8Settings)
-            {
-                WP8SimulatorBuild = EditorGUILayout.ToggleLeft(wp8SimulatorModeLabel, WP8SimulatorBuild);
-                EditorGUILayout.Space();
-                WP8TestMode = EditorGUILayout.ToggleLeft(wp8TestModeLabel, WP8TestMode);
-            }
-
-        }
-
-
-
-
+		
+		
+		private void WP8GUI()
+		{
+			showWP8Settings = EditorGUILayout.Foldout(showWP8Settings, "WP8 Settings");
+			if (showWP8Settings)
+			{
+				WP8SimulatorBuild = EditorGUILayout.ToggleLeft(wp8SimulatorModeLabel, WP8SimulatorBuild);
+				EditorGUILayout.Space();
+				WP8TestMode = EditorGUILayout.ToggleLeft(wp8TestModeLabel, WP8TestMode);
+			}
+			
+		}
+		
+		
+		
+		
 		/** Billing Providers util functions **/
-
+		
 		private void setCurrentBPUpdate(string bpKey) {
 			bpUpdate[bpKey] = true;
 			var buffer = new List<string>(bpUpdate.Keys);
@@ -245,11 +281,11 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		private Dictionary<string, bool> bpUpdate = new Dictionary<string, bool>();
 		private static string bpRootPath = Application.dataPath + "/WebPlayerTemplates/SoomlaConfig/android/android-billing-services/";
-        private static string wp8RootPath = Application.dataPath + "/WebPlayerTemplates/SoomlaConfig/wp8/";
-
+		private static string wp8RootPath = Application.dataPath + "/WebPlayerTemplates/SoomlaConfig/wp8/";
+		
 		public static void handlePlayBPJars(bool remove) {
 			try {
 				if (remove) {
@@ -261,7 +297,19 @@ namespace Soomla.Store
 				}
 			}catch {}
 		}
-
+		
+		public static void handleMyketBPJars(bool remove) {
+			try {
+				if (remove) {
+					FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/Android/AndroidStoreMyket.jar");
+					FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/Android/AndroidStoreMyket.jar.meta");
+				} else {
+					FileUtil.CopyFileOrDirectory(bpRootPath + "myket/AndroidStoreMyket.jar",
+					                             Application.dataPath + "/Plugins/Android/AndroidStoreMyket.jar");
+				}
+			}catch {}
+		}
+		
 		public static void handleAmazonBPJars(bool remove) {
 			try {
 				if (remove) {
@@ -277,27 +325,27 @@ namespace Soomla.Store
 				}
 			}catch {}
 		}
-
-
-
-#endif
-
-
-
-
-
-
-
+		
+		
+		
+		#endif
+		
+		
+		
+		
+		
+		
+		
 		/** Store Specific Variables **/
-
-
+		
+		
 		public static string AND_PUB_KEY_DEFAULT = "YOUR GOOGLE PLAY PUBLIC KEY";
-
+		
 		public static string PLAY_CLIENT_ID_DEFAULT = "YOUR CLIENT ID";
 		public static string PLAY_CLIENT_SECRET_DEFAULT = "YOUR CLIENT SECRET";
 		public static string PLAY_REFRESH_TOKEN_DEFAULT = "YOUR REFRESH TOKEN";
-
-
+		
+		
 		public static string AndroidPublicKey
 		{
 			get {
@@ -315,7 +363,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static string PlayClientId
 		{
 			get {
@@ -333,7 +381,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static string PlayClientSecret
 		{
 			get {
@@ -351,7 +399,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static string PlayRefreshToken
 		{
 			get {
@@ -369,7 +417,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static bool PlayVerifyOnServerFailure
 		{
 			get {
@@ -387,7 +435,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static bool AndroidTestPurchases
 		{
 			get {
@@ -405,7 +453,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static bool PlaySsvValidation
 		{
 			get {
@@ -423,7 +471,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static bool IosSSV
 		{
 			get {
@@ -441,7 +489,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static bool IosVerifyOnServerFailure
 		{
 			get {
@@ -459,8 +507,8 @@ namespace Soomla.Store
 				}
 			}
 		}
-
-    	public static bool NoneBP
+		
+		public static bool NoneBP
 		{
 			get {
 				string value;
@@ -477,7 +525,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static bool GPlayBP
 		{
 			get {
@@ -495,7 +543,7 @@ namespace Soomla.Store
 				}
 			}
 		}
-
+		
 		public static bool AmazonBP
 		{
 			get {
@@ -513,63 +561,115 @@ namespace Soomla.Store
 				}
 			}
 		}
+		
+		public static bool WP8SimulatorBuild
+		{
+			get
+			{
+				string value;
+				return SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("WP8SimulatorBuild", out value) ? Convert.ToBoolean(value) : false;
+			}
+			set
+			{
+				string v;
+				SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("WP8SimulatorBuild", out v);
+				if (Convert.ToBoolean(v) != value)
+				{
+					SoomlaEditorScript.Instance.setSettingsValue("WP8SimulatorBuild", value.ToString());
+					SoomlaEditorScript.DirtyEditor();
+					#if UNITY_EDITOR
+					if (value == true)
+					{
+						FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/sqlite3.dll");
+						FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.dll");
+						FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
+						FileUtil.CopyFileOrDirectory(wp8RootPath + "x86/sqlite3.soomladll",Application.dataPath + "/Plugins/WP8/sqlite3.dll");
+						FileUtil.CopyFileOrDirectory(wp8RootPath + "x86/Sqlite.soomladll",Application.dataPath + "/Plugins/WP8/Sqlite.dll");
+						FileUtil.CopyFileOrDirectory(wp8RootPath + "x86/Sqlite.soomlawinmd",Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
+					}
+					else
+					{
+						FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/sqlite3.dll");
+						FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.dll");
+						FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
+						FileUtil.CopyFileOrDirectory(wp8RootPath + "ARM/sqlite3.soomladll",Application.dataPath + "/Plugins/WP8/sqlite3.dll");
+						FileUtil.CopyFileOrDirectory(wp8RootPath + "ARM/Sqlite.soomlawinmd",Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
+						FileUtil.CopyFileOrDirectory(wp8RootPath + "ARM/Sqlite.soomladll",Application.dataPath + "/Plugins/WP8/Sqlite.dll");
+					}
+					#endif
+				}
+			}
+		}
+		
+		public static bool WP8TestMode {
+			get {
+				string value;
+				return SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue ("WP8TestMode", out value) ? Convert.ToBoolean (value) : false;
+			}
+			set {
+				string v;
+				SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue ("WP8TestMode", out v);
+				if (Convert.ToBoolean (v) != value) {
+					SoomlaEditorScript.Instance.setSettingsValue ("WP8TestMode", value.ToString ());
+					SoomlaEditorScript.DirtyEditor ();
+				}
+			}
+		}
+				public static string MYKET_PUB_KEY_DEFAULT = "YOUR MYKET RSA KEY";
+				
+				public static string MyketPublicKey
+				{
+					get {
+						string value;
+						return SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("MyketPublicKey", out value) ? value : MYKET_PUB_KEY_DEFAULT;
+					}
+					set 
+					{
+						string v;
+						SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("MyketPublicKey", out v);
+						if (v != value)
+						{
+							SoomlaEditorScript.Instance.setSettingsValue("MyketPublicKey",value);
+							SoomlaEditorScript.DirtyEditor ();
+						}
+					}
+				}
+				
+				public static bool MyketTestPurchases
+				{
+					get { 
+						string value;
+						return SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("MyketTestPurchases", out value) ? Convert.ToBoolean(value) : false;
+					}
+					set 
+					{
+						string v;
+						SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("MyketTestPurchases", out v);
+						if (Convert.ToBoolean(v) != value)
+						{
+							SoomlaEditorScript.Instance.setSettingsValue("MyketTestPurchases",value.ToString());
+							SoomlaEditorScript.DirtyEditor ();
+						}
+					}
+				}
 
-        public static bool WP8SimulatorBuild
-        {
-            get
-            {
-                string value;
-                return SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("WP8SimulatorBuild", out value) ? Convert.ToBoolean(value) : false;
-            }
-            set
-            {
-                string v;
-                SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("WP8SimulatorBuild", out v);
-                if (Convert.ToBoolean(v) != value)
-                {
-                    SoomlaEditorScript.Instance.setSettingsValue("WP8SimulatorBuild", value.ToString());
-                    SoomlaEditorScript.DirtyEditor();
-#if UNITY_EDITOR
-                    if (value == true)
-                    {
-                        FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/sqlite3.dll");
-                        FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.dll");
-                        FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
-                        FileUtil.CopyFileOrDirectory(wp8RootPath + "x86/sqlite3.soomladll",Application.dataPath + "/Plugins/WP8/sqlite3.dll");
-                        FileUtil.CopyFileOrDirectory(wp8RootPath + "x86/Sqlite.soomladll",Application.dataPath + "/Plugins/WP8/Sqlite.dll");
-                        FileUtil.CopyFileOrDirectory(wp8RootPath + "x86/Sqlite.soomlawinmd",Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
-                    }
-                    else
-                    {
-                        FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/sqlite3.dll");
-                        FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.dll");
-                        FileUtil.DeleteFileOrDirectory(Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
-                        FileUtil.CopyFileOrDirectory(wp8RootPath + "ARM/sqlite3.soomladll",Application.dataPath + "/Plugins/WP8/sqlite3.dll");
-                        FileUtil.CopyFileOrDirectory(wp8RootPath + "ARM/Sqlite.soomlawinmd",Application.dataPath + "/Plugins/WP8/Sqlite.winmd");
-                        FileUtil.CopyFileOrDirectory(wp8RootPath + "ARM/Sqlite.soomladll",Application.dataPath + "/Plugins/WP8/Sqlite.dll");
-                    }
-#endif
-                }
-            }
-        }
-
-        public static bool WP8TestMode
-        {
-            get
-            {
-                string value;
-                return SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("WP8TestMode", out value) ? Convert.ToBoolean(value) : false;
-            }
-            set
-            {
-                string v;
-                SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("WP8TestMode", out v);
-                if (Convert.ToBoolean(v) != value)
-                {
-                    SoomlaEditorScript.Instance.setSettingsValue("WP8TestMode", value.ToString());
-                    SoomlaEditorScript.DirtyEditor();
-                }
-            }
-        }
+	public static bool MyketBP
+	{
+		get { 
+			string value;
+			return SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("MyketBP", out value) ? Convert.ToBoolean(value) : false;
+		}
+		set 
+		{
+			string v;
+			SoomlaEditorScript.Instance.SoomlaSettings.TryGetValue("MyketBP", out v);
+			if (Convert.ToBoolean(v) != value)
+			{
+				SoomlaEditorScript.Instance.setSettingsValue("MyketBP",value.ToString());
+				SoomlaEditorScript.DirtyEditor ();
+			}
+		}
 	}
+	
+}
 }

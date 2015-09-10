@@ -50,6 +50,8 @@ namespace Soomla.Store
 		/// <param name="storeAssets">Your game's economy.</param>
 		/// <exception cref="ExitGUIException">Thrown if soomlaSecret is missing or has not been changed.</exception>
 		public static bool Initialize(IStoreAssets storeAssets) {
+			SoomlaUtils.LogError(TAG, "SoomlaStore method called ...");
+
 			if (string.IsNullOrEmpty(CoreSettings.SoomlaSecret)) {
 				SoomlaUtils.LogError(TAG, "MISSING SoomlaSecret !!! Stopping here !!");
 				throw new ExitGUIException();
@@ -61,8 +63,9 @@ namespace Soomla.Store
 			}
 
 			var storeEvents = GameObject.FindObjectOfType<StoreEvents> ();
+			SoomlaUtils.LogError(TAG, "SoomlaStore after storeEvents ...");
 			if (storeEvents == null) {
-				SoomlaUtils.LogDebug(TAG, "StoreEvents Component not found in scene. We're continuing from here but you won't get many events.");
+				SoomlaUtils.LogError(TAG, "StoreEvents Component not found in scene. We're continuing from here but you won't get many events.");
 			}
 
 			if (Initialized) {
@@ -71,7 +74,7 @@ namespace Soomla.Store
 				return false;
 			}
 
-			SoomlaUtils.LogDebug(TAG, "SoomlaStore Initializing ...");
+			SoomlaUtils.LogError(TAG, "SoomlaStore Initializing ...");
 
 			StoreInfo.SetStoreAssets(storeAssets);
 

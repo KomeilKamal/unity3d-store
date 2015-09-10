@@ -64,6 +64,15 @@ namespace Soomla.Store {
                     }
                 }
             }
+
+			if (StoreSettings.MyketBP) {
+				if (string.IsNullOrEmpty (StoreSettings.AndroidPublicKey) ||
+					StoreSettings.MyketPublicKey == StoreSettings.MYKET_PUB_KEY_DEFAULT) {
+					
+					SoomlaUtils.LogError (TAG, "You chose Myket billing service, but publicKey is not set!! Stopping here!!");
+					throw new ExitGUIException ();
+				}
+			}
             
             AndroidJNI.PushLocalFrame(100);
 			using(AndroidJavaClass jniSoomlaStoreClass = new AndroidJavaClass("com.soomla.store.SoomlaStore")) {
@@ -144,6 +153,16 @@ namespace Soomla.Store {
 				}
 
 			}
+
+			if (StoreSettings.MyketBP) {
+				using(AndroidJavaClass jniMyketIabServiceClass = new AndroidJavaClass("com.soomla.store.billing.google.MyketIabService")) {
+					AndroidJavaObject jniMyketIabService = jniMyketIabServiceClass.CallStatic<AndroidJavaObject>("getInstance");
+					jniMyketIabService.Call("setPublicKey", StoreSettings.MyketPublicKey);
+
+					jniMyketIabServiceClass.SetStatic("AllowAndroidTestPurchases", StoreSettings.MyketTestPurchases);
+				}
+			}
+
 			AndroidJNI.PopLocalFrame(IntPtr.Zero);
 		}
 
